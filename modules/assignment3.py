@@ -2,7 +2,7 @@ import simpy
 import numpy as np
 import matplotlib.pyplot as plt
 
-def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_speed=[1.0, 0.25], start_level=1000, arrival_rate_func=None):
+def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_speed=[1.0, 0.25], start_level=1000, arrival_rate_func=None,pairing=False):
     env = simpy.Environment()
     barage_lake = simpy.Resource(env, capacity=n_queues)
     waiting_times = []
@@ -12,6 +12,8 @@ def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_s
     queue_lengths = []
     queue = [0]
     last_water = env.event()
+    if pairing:
+        pairinglist = []
 
     def queue_time(queue_speed):
         mu, sigma = queue_speed
@@ -35,15 +37,44 @@ def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_s
 
     current_arrival_rate = [arrival_rate]
 
+    class ArrivalUtils:
+        @staticmethod
+        def exponential_arrival(rate):
+            return np.random.exponential(1.0 / rate)
+
+        @staticmethod
+        def antithetic_exponential_arrivals(rate, n):
+            """
+            Genereer n arrivals met antithetische variaten.
+            Geeft een lijst van arrivals.
+            """
+            U = np.random.uniform(size=(n+1)//2)
+            arrivals = -np.log(U) / rate
+            antithetic_arrivals = -np.log(1-U) / rate
+            result = np.empty(n)
+            result[0::2] = arrivals
+            result[1::2] = antithetic_arrivals[:n//2]
+            return result
+
     def passenger_generator(env, barage_lake, n_water, queue_speed):
-        for i in range(n_water):
-            arrival = np.random.exponential(1.0 / current_arrival_rate[0])
-            interval.append(arrival)
-            if i == n_water - 1:
-                last_water.succeed()
-            yield env.timeout(arrival)
-            passenger = check_passenger(env, barage_lake, queue_speed)
-            env.process(passenger)
+        if pairing:
+            arrivals = ArrivalUtils.antithetic_exponential_arrivals(current_arrival_rate[0], n_water)
+            for i, arrival in enumerate(arrivals):
+                interval.append(arrival)
+                if i == n_water - 1:
+                    last_water.succeed()
+                yield env.timeout(arrival)
+                passenger = check_passenger(env, barage_lake, queue_speed)
+                env.process(passenger)
+        else:
+            for i in range(n_water):
+                arrival = ArrivalUtils.exponential_arrival(current_arrival_rate[0])
+                interval.append(arrival)
+                if i == n_water - 1:
+                    last_water.succeed()
+                yield env.timeout(arrival)
+                passenger = check_passenger(env, barage_lake, queue_speed)
+                env.process(passenger)
 
     def arrival_rate_changer(env, current_arrival_rate):
         t = 0

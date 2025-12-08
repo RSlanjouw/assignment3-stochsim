@@ -1,4 +1,4 @@
-from assignment3 import barage_queue_simulation
+from modules.assignment3 import barage_queue_simulation
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -16,7 +16,7 @@ start_level = 1000
 
 print("Arrival rate")
 
- # Hidden Markov Model as a functional generator (now with 3 states: dry, rain, storm)
+# Hidden Markov Model as a functional generator (now with 3 states: dry, rain, storm)
 def make_hmm_arrival_rate_func(
     P=np.array([
         [0.4, 0.5, 0.1],  # dry -> dry, rain, storm
@@ -90,7 +90,7 @@ axs[1, 1].set_ylabel('Count')
 # make 0 y
 
 plt.tight_layout()
-plt.savefig('simulation_plots_markov.png')
+plt.savefig('images/simulation_plots_markov.png')
 # plt.show()
 
 

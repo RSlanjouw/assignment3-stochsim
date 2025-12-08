@@ -1,5 +1,6 @@
-from assignment3 import barage_queue_simulation
+from modules.assignment3 import barage_queue_simulation
 from sde_levy import create_levy_arrival_rate_func
+from markov_state import make_hmm_arrival_rate_func
 import numpy as np
 
 
@@ -13,9 +14,11 @@ def run_multiple_simulations(n_runs=1000, seed_start=0):
     max_queues = []
     for i in range(n_runs):
         np.random.seed(seed_start + i)
-        arrival_rate_func = create_levy_arrival_rate_func(
-            sigma=0.1, jump_lambda=0.01, jump_sigma=0.2, theta=0.3
-        )
+        hmm_arrival_rate_func = make_hmm_arrival_rate_func()
+
+        arrival_rate_func = hmm_arrival_rate_func
+
+
         _, _, _, _, queue_lengths = barage_queue_simulation(
             n_water=n_water,
             n_queues=n_queues,
@@ -34,8 +37,8 @@ def run_multiple_simulations(n_runs=1000, seed_start=0):
         print(f"Completed {i+1}/{n_runs} simulations.")
 
     # Save results in data folder
-    np.save("data/min_queues.npy", np.array(min_queues))
-    np.save("data/max_queues.npy", np.array(max_queues))
+    np.save("data/min_queues_markov.npy", np.array(min_queues))
+    np.save("data/max_queues_markov.npy", np.array(max_queues))
     print(f"Saved min_queues and max_queues to data folder.")
     print(f"Over {n_runs} runs:")
     print(f"Minimum queue length after startup: {np.min(min_queues)}")
