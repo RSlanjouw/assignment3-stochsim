@@ -14,9 +14,8 @@ def run_multiple_simulations(n_runs=1000, seed_start=0):
     max_queues = []
     for i in range(n_runs):
         np.random.seed(seed_start + i)
-        hmm_arrival_rate_func = make_hmm_arrival_rate_func()
 
-        arrival_rate_func = hmm_arrival_rate_func
+        arrival_rate_func = None
 
 
         _, _, _, _, queue_lengths = barage_queue_simulation(
@@ -37,8 +36,8 @@ def run_multiple_simulations(n_runs=1000, seed_start=0):
         print(f"Completed {i+1}/{n_runs} simulations.")
 
     # Save results in data folder
-    np.save("data/min_queues_markov.npy", np.array(min_queues))
-    np.save("data/max_queues_markov.npy", np.array(max_queues))
+    np.save("data/min_queues_normal.npy", np.array(min_queues))
+    np.save("data/max_queues_normal.npy", np.array(max_queues))
     print(f"Saved min_queues and max_queues to data folder.")
     print(f"Over {n_runs} runs:")
     print(f"Minimum queue length after startup: {np.min(min_queues)}")

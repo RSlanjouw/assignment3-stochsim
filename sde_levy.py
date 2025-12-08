@@ -79,5 +79,5 @@ axs[1, 1].set_xlabel('Interval Time')
 axs[1, 1].set_ylabel('Count')
 
 plt.tight_layout()
-plt.savefig('simulation_plots_sde.png')
+plt.savefig('images/simulation_plots_sde.png')
 # plt.show()
