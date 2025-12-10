@@ -1,5 +1,4 @@
-
-from assignment3 import barage_queue_simulation
+from modules.assignment3 import barage_queue_simulation
 import numpy as np
 import matplotlib.pyplot as plt
 

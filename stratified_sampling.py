@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import stats
-from assignment3 import barage_queue_simulation
+from modules.assignment3 import barage_queue_simulation
 
 
 def test_stratified_sampling ():

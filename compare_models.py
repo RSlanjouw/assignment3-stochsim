@@ -1,4 +1,4 @@
-from assignment3 import barage_queue_simulation
+from modules.assignment3 import barage_queue_simulation
 from sde_levy import create_levy_arrival_rate_func
 from markov_state import make_hmm_arrival_rate_func
 import numpy as np
