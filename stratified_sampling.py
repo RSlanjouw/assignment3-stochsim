@@ -5,7 +5,6 @@ from modules.assignment3 import barage_queue_simulation
 
 def test_stratified_sampling ():
     n_runs = 40        
-    n_arrivals = 5000  
     arrival_rate = 1.0 
     
     levels_standard = []
