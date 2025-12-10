@@ -2,7 +2,7 @@ import simpy
 import numpy as np
 import matplotlib.pyplot as plt
 
-def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_speed=[1.0, 0.25], start_level=1000, arrival_rate_func=None,pairing=False):
+def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_speed=[1.0, 0.25], start_level=1000, arrival_rate_func=None, pairing=False, stratified=False):
     env = simpy.Environment()
     barage_lake = simpy.Resource(env, capacity=n_queues)
     waiting_times = []
@@ -55,8 +55,31 @@ def barage_queue_simulation(n_water=10000, n_queues=1, arrival_rate=1.0, queue_s
             result[0::2] = arrivals
             result[1::2] = antithetic_arrivals[:n//2]
             return result
+        
+        @staticmethod
+        def generate_stratified_arrivals (arrival_rate, n_strata):
+            '''
+            Generates n exponential inter-arrival times with stratified sampling.
+            Gives a list of arrivals.
+            '''
+            u = np.random.uniform(size=n_strata) 
+            k_idx = np.arange(n_strata) 
+            stratified_u = (k_idx + u) / n_strata
+            np.random.shuffle(stratified_u)
+            arrivals = -np.log(stratified_u) / arrival_rate
+            return arrivals.tolist()
 
     def passenger_generator(env, barage_lake, n_water, queue_speed):
+        if stratified:
+            arrivals = ArrivalUtils.generate_stratified_arrivals(current_arrival_rate[0], n_water)
+            for i, arrival in enumerate(arrivals):
+                interval.append(arrival)
+                if i == n_water - 1:
+                    last_water.succeed()
+                yield env.timeout(arrival)
+                passenger = check_passenger(env, barage_lake, queue_speed)
+                env.process(passenger)
+
         if pairing:
             arrivals = ArrivalUtils.antithetic_exponential_arrivals(current_arrival_rate[0], n_water)
             for i, arrival in enumerate(arrivals):
