@@ -39,7 +39,7 @@ def simulated_annealing(n_iterations=500, initial_temp=1000, runs_per_step=3):
     
     # make sure cooling curve starts close to initial_temp
     a_param = initial_temp * math.log(b_param)
-    current_speed_mean = 1.0 
+    current_speed_mean = 5
     current_cost = get_average_cost(runs_per_step, 5000, [current_speed_mean, 0.25])
     
     best_speed = current_speed_mean
@@ -92,7 +92,7 @@ def simulated_annealing(n_iterations=500, initial_temp=1000, runs_per_step=3):
 
 
 if __name__ == "__main__":
-    best_param, min_cost, costs, params, temps = simulated_annealing(n_iterations=2000, runs_per_step=3)
+    best_param, min_cost, costs, params, temps = simulated_annealing(n_iterations=500, runs_per_step=3)
     
     print(f"\noptimilization finished!")
     print(f"Best 'Mean Service Time' found: {best_param:.4f}")
@@ -121,6 +121,6 @@ if __name__ == "__main__":
     plt.ylabel("Temperature")
     
     plt.tight_layout()
-    # plt.savefig('optimization_results.png')
+    plt.savefig('optimization_results.png')
     print("Plot opgeslagen als 'optimization_results.png'")
     plt.show()
