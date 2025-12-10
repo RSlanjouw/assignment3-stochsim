@@ -1,14 +1,7 @@
 
-from modules.assignment3 import barage_queue_simulation
+from assignment3 import barage_queue_simulation
 import numpy as np
 import matplotlib.pyplot as plt
-
-# Simulation parameters
-n_water = 100000
-n_queues = 1
-arrival_rate = 1.0
-queue_speed = [1.0, 0.25]
-start_level = 1000
 
 def create_levy_arrival_rate_func(
     sigma=0.1,
@@ -36,48 +29,58 @@ def create_levy_arrival_rate_func(
         return rate_state[0]
     return arrival_rate_func
 
-# SDE parameters for simulation
-arrival_rate_func = create_levy_arrival_rate_func(
-    sigma=0.1,
-    jump_lambda=0.01,
-    jump_sigma=0.2,
-    theta=0.3
-)
+if __name__ == "__main__":
 
-# Run simulation
-waiting_times, service_times, interval, arrival_rate_history, queue_lengths = barage_queue_simulation(
-    n_water=n_water,
-    n_queues=n_queues,
-    arrival_rate=arrival_rate,
-    queue_speed=queue_speed,
-    start_level=start_level,
-    arrival_rate_func=arrival_rate_func
-)
+    # Simulation parameters
+    n_water = 100000
+    n_queues = 1
+    arrival_rate = 1.0
+    queue_speed = [1.0, 0.25]
+    start_level = 1000
 
-# Plot results
-fig, axs = plt.subplots(2, 2, figsize=(12, 8))
-axs[0, 0].plot(arrival_rate_history)
-axs[0, 0].set_title('Arrival Rate Over Time')
-axs[0, 0].set_xlabel('Time')
-axs[0, 0].set_ylabel('Arrival Rate')
+    # SDE parameters for simulation
+    arrival_rate_func = create_levy_arrival_rate_func(
+        sigma=0.1,
+        jump_lambda=0.01,
+        jump_sigma=0.2,
+        theta=0.3
+    )
 
-service_times_cum = np.cumsum(service_times)
-min_len = min(len(service_times_cum), len(queue_lengths[start_level:]))
-axs[0, 1].plot(service_times_cum[:min_len], queue_lengths[start_level:start_level+min_len])
-axs[0, 1].set_title('Queue Length Over Time')
-axs[0, 1].set_xlabel('Time')
-axs[0, 1].set_ylabel('Queue Length')
+    # Run simulation
+    waiting_times, service_times, interval, arrival_rate_history, queue_lengths = barage_queue_simulation(
+        n_water=n_water,
+        n_queues=n_queues,
+        arrival_rate=arrival_rate,
+        queue_speed=queue_speed,
+        start_level=start_level,
+        arrival_rate_func=arrival_rate_func
+    )
+    
+    # Plot results
+    fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    axs[0, 0].plot(arrival_rate_history)
+    axs[0, 0].set_title('Arrival Rate Over Time')
+    axs[0, 0].set_xlabel('Time')
+    axs[0, 0].set_ylabel('Arrival Rate')
 
-axs[1, 0].hist(waiting_times, bins=50)
-axs[1, 0].set_title('Waiting Time Distribution')
-axs[1, 0].set_xlabel('Waiting Time')
-axs[1, 0].set_ylabel('Count')
+    service_times_cum = np.cumsum(service_times)
+    min_len = min(len(service_times_cum), len(queue_lengths[start_level:]))
+    axs[0, 1].plot(service_times_cum[:min_len], queue_lengths[start_level:start_level+min_len])
+    axs[0, 1].set_title('Queue Length Over Time')
+    axs[0, 1].set_xlabel('Time')
+    axs[0, 1].set_ylabel('Queue Length')
 
-axs[1, 1].hist(interval, bins=50)
-axs[1, 1].set_title('Interval Time Distribution')
-axs[1, 1].set_xlabel('Interval Time')
-axs[1, 1].set_ylabel('Count')
+    axs[1, 0].hist(waiting_times, bins=50)
+    axs[1, 0].set_title('Waiting Time Distribution')
+    axs[1, 0].set_xlabel('Waiting Time')
+    axs[1, 0].set_ylabel('Count')
 
-plt.tight_layout()
-plt.savefig('images/simulation_plots_sde.png')
-# plt.show()
+    axs[1, 1].hist(interval, bins=50)
+    axs[1, 1].set_title('Interval Time Distribution')
+    axs[1, 1].set_xlabel('Interval Time')
+    axs[1, 1].set_ylabel('Count')
+
+    plt.tight_layout()
+    plt.savefig('images/simulation_plots_sde.png')
+    # plt.show()
+    
